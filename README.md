@@ -48,3 +48,8 @@ serveur partagé ou de production). Le dépôt étant public, aucun identifiant 
 > syntaxe Groovy valide : `${IMAGE_NAME}:${BUILD_NUMBER}` et `-p ${APP_PORT}:8000 -e APP_VERSION=${BUILD_NUMBER}`.
 
 Le rapport et les réponses aux questions des sections 19 et 20 sont dans [RAPPORT.md](RAPPORT.md).
+Les captures d'écran (pipeline réussi, application, échec de l'étape Test) sont dans
+[`captures/`](captures/) et sont intégrées au rapport.
+
+Résultats obtenus : build n° 1 `SUCCESS`, build n° 2 `FAILURE` (étape Test, expérience
+délibérée de la Partie E), build n° 3 `SUCCESS` après correction.

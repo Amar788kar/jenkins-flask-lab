@@ -110,3 +110,48 @@ etc.) afin de ne jamais exposer de mot de passe ou de token en clair.
   monitoring/alerting, sauvegardes, rollback automatisé et webhook GitHub (si Jenkins est joignable).
 - Le compte Jenkins doit avoir accès au daemon Docker ; ceci doit rester limité à une machine
   pédagogique isolée, jamais à un serveur partagé.
+
+## 5. Captures d'écran
+
+Les captures ont été réalisées sur une instance Jenkins locale isolée (port 8082, le port 8080
+étant occupé par Nextcloud sur cette machine), avec le même job « Pipeline script from SCM »
+pointant sur https://github.com/Amar788kar/jenkins-flask-lab.
+
+### Build réussi (build n° 3) — les cinq étapes sont vertes
+
+![Pipeline Jenkins réussi](captures/01-jenkins-pipeline-success.png)
+
+![Console du build réussi](captures/02-jenkins-console-success.png)
+
+### Application déployée (http://localhost:8081, version = n° de build)
+
+![Application Flask dans le navigateur](captures/03-application-browser.png)
+
+### Build échoué (build n° 2) — étape Test en rouge
+
+![Étape Test échouée dans Jenkins](captures/04-jenkins-failed-test-stage.png)
+
+![Console du build échoué](captures/05-jenkins-console-failed.png)
+
+**Explication :** l'assertion `{"status": "ok"}` a été remplacée par `{"status": "incorrect"}`
+dans `tests/test_app.py`, puis poussée sur GitHub. Le build n° 2 a exécuté Checkout, Build puis
+Test ; pytest a échoué :
+
+```
+E   AssertionError: assert {'status': 'ok'} == {'status': 'incorrect'}
+========================= 1 failed, 1 passed in 0.62s ==========================
+```
+
+Jenkins a alors arrêté le pipeline. La console indique explicitement :
+
+```
+[Pipeline] { (Deploy)
+Stage "Deploy" skipped due to earlier failure(s)
+[Pipeline] { (Verify)
+Stage "Verify" skipped due to earlier failure(s)
+Finished: FAILURE
+```
+
+Aucune nouvelle image n'a donc été déployée et le conteneur de la version précédente est resté
+en service. L'assertion a ensuite été corrigée et poussée (`Fix health test`) ; le build n° 3
+est repassé en `SUCCESS` et sert de capture de réussite ci-dessus.
