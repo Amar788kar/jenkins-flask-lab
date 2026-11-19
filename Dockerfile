@@ -2,6 +2,10 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+# pytest lance le binaire sans ajouter le répertoire courant au sys.path :
+# PYTHONPATH garantit que "from app import app" fonctionne dans les tests.
+ENV PYTHONPATH=/app
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
